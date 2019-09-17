@@ -11,13 +11,17 @@ task run_pa {
 
         command {
                 ${pa_dir}/palinear \
-                        -p $phenofile \
-                        -d ${gtdata_dir}/${dosefile} \
-                        -i ${gtdata_dir}/${infofile} \
-                        -m ${gtdata_dir}/${mapfile} \
+                        -p "$phenofile" \
+                        -d "${gtdata_dir}/${dosefile}" \
+                        -i "${gtdata_dir}/${infofile}" \
+                        -m "${gtdata_dir}/${mapfile}" \
                         -c $chrom \
                         -o ${outprefix}
         }
+
+	runtime {
+		docker: "kwesterman/probabel-workflow:0.2"
+	}
 
         output {
                 File out = "${outprefix}_add.out.txt"
@@ -26,14 +30,14 @@ task run_pa {
 
 workflow pa_wf {
 
-        String pa_dir = "../ProbABEL/src"
-        String gtdata_dir = "../ProbABEL/examples/gtdata"
-        File phenofile = "../ProbABEL/examples/height.txt"
-        File dosefile = "test.mldose"
-        File infofile = "test.mlinfo"
-        File mapfile = "test.map"
-        String chrom = "19"
-        String outprefix = "height_base"
+	String pa_dir
+	String gtdata_dir
+	File phenofile
+	File dosefile
+	File infofile
+	File mapfile
+	String chrom
+	String outprefix
 
         call run_pa {
                 input:

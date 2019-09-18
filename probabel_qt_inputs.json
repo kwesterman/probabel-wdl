@@ -1,10 +1,7 @@
 {
-  "pa_wf.pa_dir": "/ProbABEL/src",
-  "pa_wf.gtdata_dir": "/ProbABEL/examples/gtdata",
   "pa_wf.outprefix": "height_base",
   "pa_wf.dosefile": "test.mldose",
   "pa_wf.chrom": "19",
-  "pa_wf.phenofile": "/ProbABEL/examples/height.txt",
   "pa_wf.infofile": "test.mlinfo",
   "pa_wf.mapfile": "test.map"
 }

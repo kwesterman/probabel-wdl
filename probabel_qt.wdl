@@ -2,20 +2,20 @@ task run_pa {
   
         String pa_dir
         String gtdata_dir
-        File phenofile
-        File dosefile
-        File infofile
-        File mapfile
+        String phenofile
+        String dosefile
+        String infofile
+        String mapfile
         String chrom
         String outprefix
 
         command {
                 ${pa_dir}/palinear \
-                        -p "$phenofile" \
-                        -d "${gtdata_dir}/${dosefile}" \
-                        -i "${gtdata_dir}/${infofile}" \
-                        -m "${gtdata_dir}/${mapfile}" \
-                        -c $chrom \
+                        -p ${phenofile} \
+                        -d ${gtdata_dir}/${dosefile} \
+                        -i ${gtdata_dir}/${infofile} \
+                        -m ${gtdata_dir}/${mapfile} \
+                        -c ${chrom} \
                         -o ${outprefix}
         }
 
@@ -30,12 +30,12 @@ task run_pa {
 
 workflow pa_wf {
 
-	String pa_dir
-	String gtdata_dir
-	File phenofile
-	File dosefile
-	File infofile
-	File mapfile
+	String pa_dir = "/ProbABEL/src"
+	String gtdata_dir = "/ProbABEL/examples/gtdata"
+	String phenofile = "/ProbABEL/examples/height.txt"
+	String dosefile
+	String infofile
+	String mapfile
 	String chrom
 	String outprefix
 

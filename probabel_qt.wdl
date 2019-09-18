@@ -1,21 +1,25 @@
 task run_pa {
   
-        String pa_dir
-        String gtdata_dir
-        String phenofile
-        String dosefile
-        String infofile
-        String mapfile
+        #String pa_dir
+        #String gtdata_dir
+        File phenofile
+        File dosefile
+        File infofile
+        File mapfile
         String chrom
+	Int? interaction
+	Boolean? robust
         String outprefix
 
         command {
-                ${pa_dir}/palinear \
+                /ProbABEL/src/palinear \
                         -p ${phenofile} \
-                        -d ${gtdata_dir}/${dosefile} \
-                        -i ${gtdata_dir}/${infofile} \
-                        -m ${gtdata_dir}/${mapfile} \
+                        -d ${dosefile} \
+                        -i ${infofile} \
+                        -m ${mapfile} \
                         -c ${chrom} \
+			--interaction=${default=1 interaction} \
+			${default="" true="--robust" false="" robust} \
                         -o ${outprefix}
         }
 
@@ -30,24 +34,28 @@ task run_pa {
 
 workflow pa_wf {
 
-	String pa_dir = "/ProbABEL/src"
-	String gtdata_dir = "/ProbABEL/examples/gtdata"
-	String phenofile = "/ProbABEL/examples/height.txt"
-	String dosefile
-	String infofile
-	String mapfile
+	#String pa_dir = "/ProbABEL/src"
+	#String gtdata_dir = "/ProbABEL/examples/gtdata"
+	File phenofile
+	File dosefile
+	File infofile
+	File mapfile
 	String chrom
+	Int? interaction
+	Boolean? robust
 	String outprefix
 
         call run_pa {
                 input:
-                        pa_dir = pa_dir,
-                        gtdata_dir = gtdata_dir,
+                        #pa_dir = pa_dir,
+                        #gtdata_dir = gtdata_dir,
                         phenofile = phenofile,
                         dosefile = dosefile,
                         infofile = infofile,
                         mapfile = mapfile,
                         chrom = chrom,
+			interaction = interaction,
+			robust = robust,
                         outprefix = outprefix
         }
 

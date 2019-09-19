@@ -1,12 +1,10 @@
 task run_pa {
   
-        #String pa_dir
-        #String gtdata_dir
         File phenofile
         File dosefile
         File infofile
         File mapfile
-        String chrom
+        String? chrom
 	Int? interaction
 	Boolean? robust
         String outprefix
@@ -17,7 +15,7 @@ task run_pa {
                         -d ${dosefile} \
                         -i ${infofile} \
                         -m ${mapfile} \
-                        -c ${chrom} \
+                        -c ${default="" chrom} \
 			--interaction=${default=1 interaction} \
 			${default="" true="--robust" false="" robust} \
                         -o ${outprefix}
@@ -34,13 +32,11 @@ task run_pa {
 
 workflow pa_wf {
 
-	#String pa_dir = "/ProbABEL/src"
-	#String gtdata_dir = "/ProbABEL/examples/gtdata"
 	File phenofile
 	File dosefile
 	File infofile
 	File mapfile
-	String chrom
+	String? chrom
 	Int? interaction
 	Boolean? robust
 	String outprefix

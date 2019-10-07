@@ -1,6 +1,6 @@
 {
   "run_probabel.outprefix": "height_base",
-  "run_probabel.dosefile": "testfiles/test.mldose",
+  "run_probabel.dosefiles": ["testfiles/test.mldose", "testfiles/test.mldose"],
   "run_probabel.infofile": "testfiles/test.mlinfo",
   "run_probabel.mapfile": "testfiles/test.map",
   "run_probabel.phenofile": "testfiles/height.txt",

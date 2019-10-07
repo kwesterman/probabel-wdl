@@ -39,7 +39,7 @@ workflow run_probabel {
 	#String pa_dir = "/ProbABEL/src"
 	#String gtdata_dir = "/ProbABEL/examples/gtdata"
 	File phenofile
-	File dosefile
+	Array[File] dosefiles
 	File infofile
 	File mapfile
 	String? chrom
@@ -48,22 +48,24 @@ workflow run_probabel {
 	String outprefix
 	String memory
 
-        call run_interaction {
-                input:
-                        #pa_dir = pa_dir,
-                        #gtdata_dir = gtdata_dir,
-                        phenofile = phenofile,
-                        dosefile = dosefile,
-                        infofile = infofile,
-                        mapfile = mapfile,
-                        chrom = chrom,
-			interaction = interaction,
-			robust = robust,
-                        outprefix = outprefix,
-			memory = memory
-        }
+	scatter (dosefile in dosefiles) {
+		call run_interaction {
+			input:
+				#pa_dir = pa_dir,
+				#gtdata_dir = gtdata_dir,
+				phenofile = phenofile,
+				dosefile = dosefile,
+				infofile = infofile,
+				mapfile = mapfile,
+				chrom = chrom,
+				interaction = interaction,
+				robust = robust,
+				outprefix = outprefix,
+				memory = memory
+		}
+	}
 
-        output {
-                File outfile = run_interaction.out
-        }
+        #output {
+        #        File outfile = run_interaction.out
+        #}
 }

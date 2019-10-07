@@ -1,7 +1,5 @@
 task run_interaction {
   
-        #String pa_dir
-        #String gtdata_dir
         File phenofile
         File dosefile
         File infofile
@@ -36,8 +34,6 @@ task run_interaction {
 
 workflow run_probabel {
 
-	#String pa_dir = "/ProbABEL/src"
-	#String gtdata_dir = "/ProbABEL/examples/gtdata"
 	File phenofile
 	Array[File] dosefiles
 	File infofile

@@ -1,10 +1,9 @@
 {
   "pa_wf.outprefix": "height_base",
-  "pa_wf.dosefile": "../probabeltest/ProbABEL/examples/gtdata/test.mldose",
-  "pa_wf.chrom": "19",
-  "pa_wf.infofile": "../probabeltest/ProbABEL/examples/gtdata/test.mlinfo",
-  "pa_wf.mapfile": "../probabeltest/ProbABEL/examples/gtdata/test.map",
-  "pa_wf.phenofile": "../probabeltest/ProbABEL/examples/height.txt",
+  "pa_wf.dosefile": "testfiles/test.mldose",
+  "pa_wf.infofile": "testfiles/test.mlinfo",
+  "pa_wf.mapfile": "testfiles/test.map",
+  "pa_wf.phenofile": "testfiles/height.txt",
   "pa_wf.interaction": 2,
   "pa_wf.robust": "true"
 }

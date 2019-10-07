@@ -6,7 +6,7 @@ task run_pa {
         File dosefile
         File infofile
         File mapfile
-        String chrom
+        String? chrom
 	Int? interaction
 	Boolean? robust
         String outprefix
@@ -17,7 +17,7 @@ task run_pa {
                         -d ${dosefile} \
                         -i ${infofile} \
                         -m ${mapfile} \
-                        -c ${chrom} \
+                        -c ${default="" chrom} \
 			--interaction=${default=1 interaction} \
 			${default="" true="--robust" false="" robust} \
                         -o ${outprefix}
@@ -40,7 +40,7 @@ workflow pa_wf {
 	File dosefile
 	File infofile
 	File mapfile
-	String chrom
+	String? chrom
 	Int? interaction
 	Boolean? robust
 	String outprefix

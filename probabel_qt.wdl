@@ -1,4 +1,4 @@
-task run_pa {
+task run_interaction {
   
         #String pa_dir
         #String gtdata_dir
@@ -10,6 +10,7 @@ task run_pa {
 	Int? interaction
 	Boolean? robust
         String outprefix
+	String memory
 
         command {
                 /ProbABEL/src/palinear \
@@ -25,6 +26,7 @@ task run_pa {
 
 	runtime {
 		docker: "kwesterman/probabel-workflow:0.2"
+		memory: "${memory} GB"
 	}
 
         output {
@@ -32,7 +34,7 @@ task run_pa {
         }
 }
 
-workflow pa_wf {
+workflow run_probabel {
 
 	#String pa_dir = "/ProbABEL/src"
 	#String gtdata_dir = "/ProbABEL/examples/gtdata"
@@ -44,8 +46,9 @@ workflow pa_wf {
 	Int? interaction
 	Boolean? robust
 	String outprefix
+	String memory
 
-        call run_pa {
+        call run_interaction {
                 input:
                         #pa_dir = pa_dir,
                         #gtdata_dir = gtdata_dir,
@@ -56,10 +59,11 @@ workflow pa_wf {
                         chrom = chrom,
 			interaction = interaction,
 			robust = robust,
-                        outprefix = outprefix
+                        outprefix = outprefix,
+			memory = memory
         }
 
         output {
-                File outfile = run_pa.out
+                File outfile = run_interaction.out
         }
 }

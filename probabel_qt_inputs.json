@@ -1,9 +1,10 @@
 {
-  "pa_wf.outprefix": "height_base",
-  "pa_wf.dosefile": "testfiles/test.mldose",
-  "pa_wf.infofile": "testfiles/test.mlinfo",
-  "pa_wf.mapfile": "testfiles/test.map",
-  "pa_wf.phenofile": "testfiles/height.txt",
-  "pa_wf.interaction": 2,
-  "pa_wf.robust": "true"
+  "run_probabel.outprefix": "height_base",
+  "run_probabel.dosefile": "testfiles/test.mldose",
+  "run_probabel.infofile": "testfiles/test.mlinfo",
+  "run_probabel.mapfile": "testfiles/test.map",
+  "run_probabel.phenofile": "testfiles/height.txt",
+  "run_probabel.interaction": 2,
+  "run_probabel.robust": "true",
+  "run_probabel.memory": "1"
 }

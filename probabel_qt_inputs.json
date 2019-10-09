@@ -1,10 +1,9 @@
 {
-  "run_probabel.outprefix": "height_base",
-  "run_probabel.dosefiles": ["testfiles/test.mldose", "testfiles/test.mldose"],
-  "run_probabel.infofile": "testfiles/test.mlinfo",
-  "run_probabel.mapfile": "testfiles/test.map",
-  "run_probabel.phenofile": "testfiles/height.txt",
-  "run_probabel.interaction": 2,
+  "run_probabel.outprefix": "myoutprefix",
+  "run_probabel.dosefiles": ["../probabel-workflow/testfiles/chr22subset.dose.mach.dose"],
+  "run_probabel.infofile": "../probabel-workflow/testfiles/chr22subset.dose.mach.info",
+  "run_probabel.phenofile": "../gxe-pheno-simulation/data/processed/smk_bp_sim_phenos.tsv",
+  "run_probabel.binary_outcome": "false",
   "run_probabel.robust": "true",
   "run_probabel.memory": "1"
 }

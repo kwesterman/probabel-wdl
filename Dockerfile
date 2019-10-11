@@ -13,3 +13,6 @@ RUN git clone https://github.com/GenABEL-Project/ProbABEL \
 	&& make install
 
 ENV PATH  /ProbABEL/src:$PATH
+
+RUN git clone https://github.com/large-scale-gxe-methods/probabel-workflow
+RUN pip install pandas

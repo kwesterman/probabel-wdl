@@ -13,7 +13,7 @@ task sanitize_info {
 	>>>
 
 	runtime {
-		docker: "kwesterman/probabel-workflow:0.2"
+		docker: "kwesterman/probabel-workflow:0.3"
 		memory: "${memory} GB"
 	}
 
@@ -24,20 +24,19 @@ task sanitize_info {
 
 task run_interaction {
   
-        File phenofile
         File dosefile
         File infofile
         File? mapfile
-	Boolean binary_outcome
         String? chrom
+        File phenofile
+	Boolean binary_outcome
 	Int? interaction
 	Boolean? robust
-        String outprefix
 	String memory
-	String program = if binary_outcome then "palogist" else "palinear"
+	String mode = if binary_outcome then "palogist" else "palinear"
 
         command {
-                /ProbABEL/src/${program} \
+                /ProbABEL/src/${mode} \
                         -p ${phenofile} \
                         -d ${dosefile} \
                         -i ${infofile} \
@@ -45,30 +44,52 @@ task run_interaction {
 			${"-c" + chrom} \
 			--interaction=${default=1 interaction} \
 			${default="" true="--robust" false="" robust} \
-                        -o ${outprefix}
+                        -o probabel_res
         }
 
 	runtime {
-		docker: "kwesterman/probabel-workflow:0.2"
+		docker: "kwesterman/probabel-workflow:0.3"
 		memory: "${memory} GB"
 	}
 
         output {
-                File out = "${outprefix}_add.out.txt"
+                File res = "probabel_res_add.out.txt"
         }
 }
 
+task standardize_output {
+
+	File resfile
+	String exposure
+	String memory
+	String outfile = "probabel_res_add.out.fmt.txt"
+
+	command {
+		python /probabel-workflow/format_probabel_output.py ${resfile} ${exposure} ${outfile}
+	}
+
+	runtime {
+		docker: "kwesterman/probabel-workflow:0.3"
+		memory: "${memory} GB"
+	}
+
+        output {
+                File res_fmt = "${outfile}"
+	}
+}
+			
+
 workflow run_probabel {
 
-	File phenofile
 	Array[File] dosefiles
-	File infofile
+	Array[File] infofiles
 	File? mapfile
-	Boolean binary_outcome
 	String? chrom
+	File phenofile
+	Boolean binary_outcome
 	Int? interaction
+	String exposure
 	Boolean? robust
-	String outprefix
 	String memory
 
 	parameter_meta {
@@ -77,31 +98,37 @@ workflow run_probabel {
 		binary_outcome: "name: binary_outcome, label: binary outcome, help: Is the outcome binary? Otherwise, quantitative is assumed."
 	}
 	
-	call sanitize_info {
-		input: 
-			infofile = infofile,
-			memory = memory
+	scatter (infofile in infofiles) {
+		call sanitize_info {
+			input: 
+				infofile = infofile,
+				memory = memory
+		}
 	}
+	
+	Array[Pair[File,File]] filesets = zip(dosefiles, sanitize_info.sanitized)
 
-	scatter (dosefile in dosefiles) {
+	scatter (fileset in filesets) {
 		call run_interaction {
 			input:
-				#pa_dir = pa_dir,
-				#gtdata_dir = gtdata_dir,
-				phenofile = phenofile,
-				dosefile = dosefile,
-				infofile = sanitize_info.sanitized,
+				dosefile = fileset.left,
+				infofile = fileset.right,
 				mapfile = mapfile,
-				binary_outcome = binary_outcome,
 				chrom = chrom,
+				phenofile = phenofile,
+				binary_outcome = binary_outcome,
 				interaction = interaction,
 				robust = robust,
-				outprefix = outprefix,
 				memory = memory
 		}
 	}
 
-        #output {
-        #        File outfile = run_interaction.out
-        #}
+	scatter (resfile in run_interaction.res) {
+		call standardize_output {
+			input:
+				resfile = resfile,
+				exposure = exposure,
+				memory = memory
+		}
+	}
 }

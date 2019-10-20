@@ -1,7 +1,6 @@
 task sanitize_info {
 
 	File infofile
-	String memory
 	String infofile_base = basename(infofile)
 
 	command <<<
@@ -14,7 +13,7 @@ task sanitize_info {
 
 	runtime {
 		docker: "kwesterman/probabel-workflow:0.3"
-		memory: "${memory} GB"
+		memory: "1 GB"
 	}
 
 	output {
@@ -32,7 +31,8 @@ task run_interaction {
 	Boolean binary_outcome
 	Int? interaction
 	Boolean? robust
-	String memory
+	String? memory = 10
+	String? disk = 20
 	String mode = if binary_outcome then "palogist" else "palinear"
 
         command {
@@ -50,6 +50,7 @@ task run_interaction {
 	runtime {
 		docker: "kwesterman/probabel-workflow:0.3"
 		memory: "${memory} GB"
+		disks: "local-disk ${disk} HDD"
 	}
 
         output {
@@ -61,7 +62,6 @@ task standardize_output {
 
 	File resfile
 	String exposure
-	String memory
 	String outfile = "probabel_res_add.out.fmt.txt"
 
 	command {
@@ -70,7 +70,7 @@ task standardize_output {
 
 	runtime {
 		docker: "kwesterman/probabel-workflow:0.3"
-		memory: "${memory} GB"
+		memory: "1 GB"
 	}
 
         output {
@@ -90,19 +90,19 @@ workflow run_probabel {
 	Int? interaction
 	String exposure
 	Boolean? robust
-	String memory
+	String? memory
+	String? disk
 
 	parameter_meta {
-		phenofile: "name: phenofile, label: phenotype_file, help: comma-delimited phenotype file with subject IDs in the first column and the outcome of interest (quantitative or binary) in the second column"
-		infofile: "name: infofile, label: variant information file, help: NOTE: preprocessing step within this workflow will trim the info file to the first 7 columns and sanitize columns 6 & 7 (typically Quality and Rsq) by replacing dashes with a value of 1. Ideally, this input file contains only numeric values in columns 6 & 7."
-		binary_outcome: "name: binary_outcome, label: binary outcome, help: Is the outcome binary? Otherwise, quantitative is assumed."
+		phenofile: "Comma-delimited phenotype file with subject IDs in the first column and the outcome of interest (quantitative or binary) in the second column"
+		infofile: "Variant information file. NOTE: preprocessing step within this workflow will trim the info file to the first 7 columns and sanitize columns 6 & 7 (typically Quality and Rsq) by replacing dashes with a value of 1. Ideally, this input file contains only numeric values in columns 6 & 7."
+		binary_outcome: "Boolean -- is the outcome binary? Otherwise, quantitative is assumed."
 	}
 	
 	scatter (infofile in infofiles) {
 		call sanitize_info {
 			input: 
-				infofile = infofile,
-				memory = memory
+				infofile = infofile
 		}
 	}
 	
@@ -119,7 +119,8 @@ workflow run_probabel {
 				binary_outcome = binary_outcome,
 				interaction = interaction,
 				robust = robust,
-				memory = memory
+				memory = memory,	
+				disk = disk
 		}
 	}
 
@@ -127,8 +128,7 @@ workflow run_probabel {
 		call standardize_output {
 			input:
 				resfile = resfile,
-				exposure = exposure,
-				memory = memory
+				exposure = exposure
 		}
 	}
 }

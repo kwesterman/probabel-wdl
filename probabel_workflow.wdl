@@ -26,7 +26,7 @@ task run_interaction {
         File dosefile
         File infofile
         File? mapfile
-        String? chrom
+        String chrom
         File phenofile
 	Boolean binary_outcome
 	Int? interaction
@@ -41,10 +41,9 @@ task run_interaction {
                         -d ${dosefile} \
                         -i ${infofile} \
                         ${"-m" + mapfile} \
-			${"-c" + chrom} \
 			--interaction=${default=1 interaction} \
 			${default="" true="--robust" false="" robust} \
-                        -o probabel_res
+                        -o probabel_res_${chrom}
         }
 
 	runtime {
@@ -54,7 +53,7 @@ task run_interaction {
 	}
 
         output {
-                File res = "probabel_res_add.out.txt"
+                File res = "probabel_res_${chrom}_add.out.txt"
         }
 }
 
@@ -84,7 +83,7 @@ workflow run_probabel {
 	Array[File] dosefiles
 	Array[File] infofiles
 	File? mapfile
-	String? chrom
+	Array[String] chroms
 	File phenofile
 	Boolean binary_outcome
 	Int? interaction
@@ -106,15 +105,16 @@ workflow run_probabel {
 		}
 	}
 	
-	Array[Pair[File,File]] filesets = zip(dosefiles, sanitize_info.sanitized)
+	#Array[Pair[File,File]] filesets = zip(dosefiles, sanitize_info.sanitized)
+	
 
-	scatter (fileset in filesets) {
+	scatter (i in range(length(dosefiles))) {
 		call run_interaction {
 			input:
-				dosefile = fileset.left,
-				infofile = fileset.right,
+				dosefile = dosefiles[i],
+				infofile = sanitize_info.sanitized[i],
 				mapfile = mapfile,
-				chrom = chrom,
+				chrom = chroms[i],
 				phenofile = phenofile,
 				binary_outcome = binary_outcome,
 				interaction = interaction,

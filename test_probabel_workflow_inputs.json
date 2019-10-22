@@ -2,6 +2,7 @@
   "run_probabel.outprefix": "smk_bp",
   "run_probabel.dosefiles": ["../probabel-workflow/testfiles/chr22subset.dose.mach.dose"],
   "run_probabel.infofiles": ["../probabel-workflow/testfiles/chr22subset.dose.mach.info"],
+  "run_probabel.chroms": ["chr22"],
   "run_probabel.phenofile": "../gxe-pheno-simulation/data/processed/smk_bp_sim_phenos.tsv",
   "run_probabel.binary_outcome": "false",
   "run_probabel.exposure": "smk_sim",

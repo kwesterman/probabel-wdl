@@ -12,7 +12,7 @@ task sanitize_info {
 	>>>
 
 	runtime {
-		docker: "kwesterman/probabel-workflow:0.3"
+		docker: "kwesterman/probabel-workflow:0.4"
 		memory: "1 GB"
 	}
 
@@ -47,7 +47,7 @@ task run_interaction {
         }
 
 	runtime {
-		docker: "kwesterman/probabel-workflow:0.3"
+		docker: "kwesterman/probabel-workflow:0.4"
 		memory: "${memory} GB"
 		disks: "local-disk ${disk} HDD"
 	}
@@ -68,7 +68,7 @@ task standardize_output {
 	}
 
 	runtime {
-		docker: "kwesterman/probabel-workflow:0.3"
+		docker: "kwesterman/probabel-workflow:0.4"
 		memory: "1 GB"
 	}
 

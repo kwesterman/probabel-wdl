@@ -65,7 +65,7 @@ task standardize_output {
 	String outfile = "${outfile_base}.fmt"
 
 	command {
-		python /probabel-workflow/format_probabel_output.py ${resfile} ${exposure} ${outfile}
+		python3 /probabel-workflow/format_probabel_output.py ${resfile} ${exposure} ${outfile}
 	}
 
 	runtime {

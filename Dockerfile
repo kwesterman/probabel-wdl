@@ -2,7 +2,7 @@ FROM uwgac/ubuntu-18.04-hpc
 
 MAINTAINER Kenny Westerman <kewesterman@mgh.harvard.edu>
 
-RUN apt-get update && apt-get install -y libeigen3-dev
+RUN apt-get update && apt-get install -y git python3 python3-pip libeigen3-dev autoconf 
 
 RUN git clone https://github.com/GenABEL-Project/ProbABEL \
 	&& cd ProbABEL \
@@ -15,4 +15,4 @@ RUN git clone https://github.com/GenABEL-Project/ProbABEL \
 ENV PATH  /ProbABEL/src:$PATH
 
 RUN git clone https://github.com/large-scale-gxe-methods/probabel-workflow
-RUN pip install pandas scipy
+RUN pip3 install pandas scipy

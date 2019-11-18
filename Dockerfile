@@ -1,8 +1,9 @@
-FROM uwgac/ubuntu-18.04-hpc
+FROM ubuntu:latest
 
 MAINTAINER Kenny Westerman <kewesterman@mgh.harvard.edu>
 
 RUN apt-get update && apt-get install -y git python3 python3-pip libeigen3-dev autoconf 
+RUN pip3 install pandas scipy
 
 RUN git clone https://github.com/GenABEL-Project/ProbABEL \
 	&& cd ProbABEL \
@@ -14,5 +15,4 @@ RUN git clone https://github.com/GenABEL-Project/ProbABEL \
 
 ENV PATH  /ProbABEL/src:$PATH
 
-RUN git clone https://github.com/large-scale-gxe-methods/probabel-workflow
-RUN pip3 install pandas scipy
+COPY format_probabel_phenos.py format_probabel_output.py /

@@ -1,3 +1,30 @@
+task process_phenos {
+	
+	File phenofile
+	String sample_id_header
+	String outcome
+	String covar_headers
+	String int_covar_num
+	String? delimiter = ","
+	String? missing = "NA"
+
+	# String phenofile_size = size(phenofile)
+
+	command {
+		python3 /format_probabel_phenos.py ${phenofile} ${sample_id_header} ${outcome} "${covar_headers}" ${int_covar_num} "${delimiter}" ${missing}
+	}
+
+	runtime {
+		docker: "quay.io/large-scale-gxe-methods/probabel-workflow"
+		memory: "1 GB"
+	}
+		#memory: "2*${phenofile_size} GB"
+
+        output {
+                File pheno_fmt = "probabel_phenotypes.csv"
+	}
+}
+
 task sanitize_info {
 
 	File infofile
@@ -6,13 +33,13 @@ task sanitize_info {
 	command <<<
 		cat ${infofile} \
 			| cut -f 1-7 \
-			| awk 'gsub("-","1",$6)' \
+			| awk 'gsub("-","1",$6); {print}' \
 			| awk 'gsub("-","1",$7); {print}' \
 			> "${infofile_base}.clean"
 	>>>
 
 	runtime {
-		docker: "kwesterman/probabel-workflow:0.4"
+		docker: "quay.io/large-scale-gxe-methods/probabel-workflow"
 		memory: "1 GB"
 	}
 
@@ -25,10 +52,8 @@ task run_interaction {
   
         File genofile
         File infofile
-        File? mapfile
         File phenofile
 	Boolean binary_outcome
-	Int? interaction
 	Boolean? robust
         String out_name
 	String? memory = 10
@@ -40,14 +65,13 @@ task run_interaction {
                         -p ${phenofile} \
                         -d ${genofile} \
                         -i ${infofile} \
-                        ${"-m" + mapfile} \
-			--interaction=${default=1 interaction} \
+			--interaction 1 \
 			${default="" true="--robust" false="" robust} \
                         -o probabel_res_${out_name}
         }
 
 	runtime {
-		docker: "kwesterman/probabel-workflow:0.4"
+		docker: "quay.io/large-scale-gxe-methods/probabel-workflow"
 		memory: "${memory} GB"
 		disks: "local-disk ${disk} HDD"
 	}
@@ -60,16 +84,17 @@ task run_interaction {
 task standardize_output {
 
 	File resfile
-	String exposure
+	String covar_headers
+	String int_covar_num
 	String outfile_base = basename(resfile)
 	String outfile = "${outfile_base}.fmt"
 
 	command {
-		python3 /probabel-workflow/format_probabel_output.py ${resfile} ${exposure} ${outfile}
+		python3 /format_probabel_output.py ${resfile} "${covar_headers}" ${int_covar_num} ${outfile}
 	}
 
 	runtime {
-		docker: "kwesterman/probabel-workflow:0.4"
+		docker: "quay.io/large-scale-gxe-methods/probabel-workflow"
 		memory: "1 GB"
 	}
 
@@ -83,15 +108,29 @@ workflow run_probabel {
 
 	Array[File] genofiles
 	Array[File] infofiles
-	File? mapfile
 	File phenofile
+	String sample_id_header
+	String outcome
 	Boolean binary_outcome
-	Int? interaction
-	String exposure
+	String covar_headers
+	String int_covar_num
+	String? delimiter
+	String? missing
 	Boolean? robust
 	Array[String] out_names
 	String? memory
 	String? disk
+
+	call process_phenos {
+		input:
+			phenofile = phenofile,
+			sample_id_header = sample_id_header,
+			outcome = outcome,
+			covar_headers = covar_headers,
+			int_covar_num = int_covar_num,
+			delimiter = delimiter,
+			missing = missing
+	}
 
 	scatter (infofile in infofiles) {
 		call sanitize_info {
@@ -105,12 +144,11 @@ workflow run_probabel {
 			input:
 				genofile = genofiles[i],
 				infofile = sanitize_info.sanitized[i],
-				mapfile = mapfile,
 				out_name = out_names[i],
-				phenofile = phenofile,
+				phenofile = process_phenos.pheno_fmt,
 				binary_outcome = binary_outcome,
-				interaction = interaction,
 				robust = robust,
+
 				memory = memory,	
 				disk = disk
 		}
@@ -120,21 +158,27 @@ workflow run_probabel {
 		call standardize_output {
 			input:
 				resfile = resfile,
-				exposure = exposure
+				covar_headers = covar_headers,
+				int_covar_num = int_covar_num
 		}
-	}
-	
+	}	
+
 	parameter_meta {
-		genofiles: "Imputed genotypes in Minimac dosage format"
+		genofiles: "Array of genotype filepaths in Minimac dosage format."
 		infofiles: "Variant information files. NOTE: preprocessing step within this workflow will trim the info file to the first 7 columns and sanitize columns 6 & 7 (typically Quality and Rsq) by replacing dashes with a value of 1. Ideally, this input file contains only numeric values in columns 6 & 7."
-		phenofile: "Comma-delimited phenotype file with subject IDs in the first column and the outcome of interest (quantitative or binary) in the second column"
+		phenofile: "Phenotype filepath."	
+		sample_id_header: "Column header name of sample ID in phenotype file."
+		outcome: "Column header name of phenotype data in phenotype file."
 		binary_outcome: "Boolean: is the outcome binary? Otherwise, quantitative is assumed."
-		interaction: "Boolean: should an interaction term be included? The first covariate in the phenotype file will be used. Defaults to true."
-		exposure: "Name of the interaction exposure to be used. NOTE: this does NOT affect the model, only the naming/post-processing."
-		robust: "Boolean: should robust/sandwich/Huber-White standard errors be used?"
-		out_names: "Names to be included for distinguishing output files."
-		memory: "Memory required for the modeling step (in GB)."
-		disk: "Disk space required for the modeling step (in GB)."
+		covar_headers: "Column header names of the selected covariates in the pheno data file."
+		int_covar_num: "Indexes of the covariates for which interactions with genotype should be included ('1' means use the first covariate, '2 3' means use the second and third covariates, etc.)."
+		delimiter: "Delimiter used in the phenotype file."
+		missing: "Missing value key of phenotype file."
+                robust: "Boolean: should robust (a.k.a. sandwich/Huber-White) standard errors be used?"
+        missing: "Missing value key of phenotype file."
+		out_names: "Array of names to distinguish output files (e.g. chromosome numbers)."
+		memory: "Requested memory for the interaction testing step (in GB)."
+		disk: "Requested disk space for the interaction testing step (in GB)."
 	}
 
 	meta {

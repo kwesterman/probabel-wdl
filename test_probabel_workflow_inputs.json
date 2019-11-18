@@ -1,10 +1,15 @@
 {
-  "run_probabel.genofiles": ["../probabel-workflow/testfiles/chr22subset.dose.mach.dose"],
-  "run_probabel.infofiles": ["../probabel-workflow/testfiles/chr22subset.dose.mach.info"],
-  "run_probabel.phenofile": "../gxe-pheno-simulation/data/processed/smk_bp_sim_phenos.tsv",
+  "run_probabel.genofiles": ["testfiles/test.mldose"],
+  "run_probabel.infofiles": ["testfiles/test.mlinfo"],
+  "run_probabel.phenofile": "testfiles/height.txt",
+  "run_probabel.sample_id_header": "id",
+  "run_probabel.outcome": "height",
   "run_probabel.binary_outcome": "false",
-  "run_probabel.exposure": "smk_sim",
+  "run_probabel.covar_headers": "sex age",
+  "run_probabel.int_covar_num": "1",
+  "run_probabel.delimiter": " ",
+  "run_probabel.missing": "NA",
   "run_probabel.robust": "true",
-  "run_probabel.out_names": ["chr22"],
+  "run_probabel.out_names": ["test_set"],
   "run_probabel.memory": "1"
 }

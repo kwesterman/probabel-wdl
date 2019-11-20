@@ -144,11 +144,10 @@ workflow run_probabel {
 			input:
 				genofile = genofiles[i],
 				infofile = sanitize_info.sanitized[i],
-				out_name = out_names[i],
 				phenofile = process_phenos.pheno_fmt,
 				binary_outcome = binary_outcome,
 				robust = robust,
-
+				out_name = out_names[i],
 				memory = memory,	
 				disk = disk
 		}
@@ -184,6 +183,6 @@ workflow run_probabel {
 	meta {
 		author: "Kenny Westerman"
 		email: "kewesterman@mgh.harvard.edu"
-		description: "Run interaction tests using the ProbABEL package and return a table of summary statistics for 1-DF and 2-DF tests."
+		description: "Run interaction tests using the ProbABEL package and return summary statistics for 1-DF and 2-DF tests."
 	}
 }

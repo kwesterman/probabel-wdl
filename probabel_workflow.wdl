@@ -8,17 +8,14 @@ task process_phenos {
 	String? delimiter = ","
 	String? missing = "NA"
 
-	# String phenofile_size = size(phenofile)
-
 	command {
 		python3 /format_probabel_phenos.py ${phenofile} ${sample_id_header} ${outcome} "${covar_headers}" ${int_covar_num} "${delimiter}" ${missing}
 	}
 
 	runtime {
 		docker: "quay.io/large-scale-gxe-methods/probabel-workflow"
-		memory: "1 GB"
+		memory: "2*size(phenofile) GB"
 	}
-		#memory: "2*${phenofile_size} GB"
 
         output {
                 File pheno_fmt = "probabel_phenotypes.csv"
@@ -95,7 +92,7 @@ task standardize_output {
 
 	runtime {
 		docker: "quay.io/large-scale-gxe-methods/probabel-workflow"
-		memory: "1 GB"
+		memory: "2*size(resfile) GB"
 	}
 
         output {

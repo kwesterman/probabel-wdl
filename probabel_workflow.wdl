@@ -4,12 +4,12 @@ task process_phenos {
 	String sample_id_header
 	String outcome
 	String covar_headers
-	String int_covar_num
+	String exposure
 	String? delimiter = ","
 	String? missing = "NA"
 
 	command {
-		python3 /format_probabel_phenos.py ${phenofile} ${sample_id_header} ${outcome} "${covar_headers}" ${int_covar_num} "${delimiter}" ${missing}
+		python3 /format_probabel_phenos.py ${phenofile} ${sample_id_header} ${outcome} "${covar_headers}" ${exposure} "${delimiter}" ${missing}
 	}
 
 	runtime {
@@ -81,13 +81,12 @@ task run_interaction {
 task standardize_output {
 
 	File resfile
-	String covar_headers
-	String int_covar_num
+	String exposure
 	String outfile_base = basename(resfile)
 	String outfile = "${outfile_base}.fmt"
 
 	command {
-		python3 /format_probabel_output.py ${resfile} "${covar_headers}" ${int_covar_num} ${outfile}
+		python3 /format_probabel_output.py ${resfile} ${exposure} ${outfile}
 	}
 
 	runtime {
@@ -110,7 +109,7 @@ workflow run_probabel {
 	String outcome
 	Boolean binary_outcome
 	String covar_headers
-	String int_covar_num
+	String exposures
 	String? delimiter
 	String? missing
 	Boolean? robust
@@ -124,7 +123,7 @@ workflow run_probabel {
 			sample_id_header = sample_id_header,
 			outcome = outcome,
 			covar_headers = covar_headers,
-			int_covar_num = int_covar_num,
+			exposure = exposures,
 			delimiter = delimiter,
 			missing = missing
 	}
@@ -154,8 +153,7 @@ workflow run_probabel {
 		call standardize_output {
 			input:
 				resfile = resfile,
-				covar_headers = covar_headers,
-				int_covar_num = int_covar_num
+				exposure = exposures
 		}
 	}	
 
@@ -167,7 +165,7 @@ workflow run_probabel {
 		outcome: "Column header name of phenotype data in phenotype file."
 		binary_outcome: "Boolean: is the outcome binary? Otherwise, quantitative is assumed."
 		covar_headers: "Column header names of the selected covariates in the pheno data file."
-		int_covar_num: "Indexes of the covariates for which interactions with genotype should be included ('1' means use the first covariate, '2 3' means use the second and third covariates, etc.)."
+		exposures: "Column header name of the covariates to use as the exposure for genotype interaction testing (ProbABEL can only handle one). The exposure must also be provided as a covariate."
 		delimiter: "Delimiter used in the phenotype file."
 		missing: "Missing value key of phenotype file."
                 robust: "Boolean: should robust (a.k.a. sandwich/Huber-White) standard errors be used?"

@@ -6,7 +6,7 @@
   "run_probabel.outcome": "height",
   "run_probabel.binary_outcome": "false",
   "run_probabel.covar_headers": "sex age",
-  "run_probabel.int_covar_num": "1",
+  "run_probabel.exposures": "sex",
   "run_probabel.delimiter": " ",
   "run_probabel.missing": "NA",
   "run_probabel.robust": "true",

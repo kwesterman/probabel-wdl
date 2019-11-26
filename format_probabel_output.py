@@ -3,9 +3,7 @@ import pandas as pd
 from scipy.stats import chi2
 
 
-resfile, covar_headers, int_covar_num, outfile = sys.argv[1:5]
-
-exposure = covar_headers.split(" ")[int(int_covar_num) - 1]
+resfile, exposure, outfile = sys.argv[1:5]
 
 names_dict = {'name': 'SNPID', 'A1': 'Allele1', 'A2': 'Allele2', 
 	      'beta_SNP_addA1': 'Beta_Main', 'sebeta_SNP_addA1': 'SE_Beta_Main', 

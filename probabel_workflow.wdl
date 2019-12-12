@@ -14,7 +14,7 @@ task process_phenos {
 
 	runtime {
 		docker: "quay.io/large-scale-gxe-methods/probabel-workflow"
-		memory: "2*size(phenofile) GB"
+		memory: "2 GB"
 	}
 
         output {
@@ -91,11 +91,29 @@ task standardize_output {
 
 	runtime {
 		docker: "quay.io/large-scale-gxe-methods/probabel-workflow"
-		memory: "2*size(resfile) GB"
+		memory: "2 GB"
 	}
 
         output {
                 File res_fmt = "${outfile}"
+	}
+}
+
+task cat_results {
+
+	Array[File] results_array
+
+	command {
+		head -1 ${results_array[0]} > all_results.txt && \
+			for res in ${sep=" " results_array}; do tail -n +2 $res >> all_results.txt; done
+	}
+	
+	runtime {
+		docker: "quay.io/large-scale-gxe-methods/probabel-workflow"
+		disks: "local-disk 5 HDD"
+	}
+	output {
+		File all_results = "all_results.txt"
 	}
 }
 			
@@ -156,6 +174,11 @@ workflow run_probabel {
 				exposure = exposures
 		}
 	}	
+
+	call cat_results {
+		input:
+			results_array = standardize_output.res_fmt
+	}
 
 	parameter_meta {
 		genofiles: "Array of genotype filepaths in Minimac dosage format."

@@ -1,6 +1,6 @@
 {
-  "run_probabel.genofiles": ["testfiles/test.mldose"],
-  "run_probabel.infofiles": ["testfiles/test.mlinfo"],
+  "run_probabel.genofiles": ["testfiles/test.mldose", "testfiles/test.mldose"],
+  "run_probabel.infofiles": ["testfiles/test.mlinfo", "testfiles/test.mlinfo"],
   "run_probabel.phenofile": "testfiles/test_phenos.txt",
   "run_probabel.sample_id_header": "id",
   "run_probabel.outcome": "height",
@@ -10,6 +10,6 @@
   "run_probabel.delimiter": " ",
   "run_probabel.missing": "NA",
   "run_probabel.robust": "true",
-  "run_probabel.out_names": ["test_set"],
+  "run_probabel.out_names": ["test_set", "test_set2"],
   "run_probabel.memory": "1"
 }

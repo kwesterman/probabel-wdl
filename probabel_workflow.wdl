@@ -30,7 +30,7 @@ task sanitize_info {
 	command <<<
 		cat ${infofile} \
 			| cut -f 1-7 \
-			| awk 'gsub("-","1",$6); {print}' \
+			| awk 'gsub("-","1",$6)' \
 			| awk 'gsub("-","1",$7); {print}' \
 			> "${infofile_base}.clean"
 	>>>

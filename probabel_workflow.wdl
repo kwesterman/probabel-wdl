@@ -52,7 +52,6 @@ task run_interaction {
         File phenofile
 	Boolean binary_outcome
 	Boolean? robust
-        String out_name
 	Int? memory = 10
 	Int? disk = 20
 	String mode = if binary_outcome then "palogist" else "palinear"
@@ -64,7 +63,7 @@ task run_interaction {
                         -i ${infofile} \
 			--interaction 1 \
 			${default="" true="--robust" false="" robust} \
-                        -o probabel_res_${out_name}
+                        -o probabel_res
         }
 
 	runtime {
@@ -74,7 +73,7 @@ task run_interaction {
 	}
 
         output {
-                File res = "probabel_res_${out_name}_add.out.txt"
+                File res = "probabel_res_add.out.txt"
         }
 }
 
@@ -131,7 +130,6 @@ workflow run_probabel {
 	String? delimiter
 	String? missing
 	Boolean? robust
-	Array[String] out_names
 	Int? memory
 	Int? disk
 
@@ -161,7 +159,6 @@ workflow run_probabel {
 				phenofile = process_phenos.pheno_fmt,
 				binary_outcome = binary_outcome,
 				robust = robust,
-				out_name = out_names[i],
 				memory = memory,	
 				disk = disk
 		}
@@ -195,9 +192,7 @@ workflow run_probabel {
 		exposures: "Column header name of the covariates to use as the exposure for genotype interaction testing (ProbABEL can only handle one). The exposure must also be provided as a covariate."
 		delimiter: "Delimiter used in the phenotype file."
 		missing: "Missing value key of phenotype file."
-                robust: "Boolean: should robust (a.k.a. sandwich/Huber-White) standard errors be used?"
-        missing: "Missing value key of phenotype file."
-		out_names: "Array of names to distinguish output files (e.g. chromosome numbers)."
+		robust: "Boolean: should robust (a.k.a. sandwich/Huber-White) standard errors be used?"
 		memory: "Requested memory for the interaction testing step (in GB)."
 		disk: "Requested disk space for the interaction testing step (in GB)."
 	}

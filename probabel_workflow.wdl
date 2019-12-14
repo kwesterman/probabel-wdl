@@ -30,8 +30,8 @@ task sanitize_info {
 	command <<<
 		cat ${infofile} \
 			| cut -f 1-7 \
-			| awk 'gsub("-","1",$6)' \
-			| awk 'gsub("-","1",$7); {print}' \
+			| awk '{ gsub("-","1",$6); print }' \
+			| awk '{ gsub("-","1",$7); print }' \
 			> "${infofile_base}.clean"
 	>>>
 
@@ -53,8 +53,8 @@ task run_interaction {
 	Boolean binary_outcome
 	Boolean? robust
         String out_name
-	String? memory = 10
-	String? disk = 20
+	Int? memory = 10
+	Int? disk = 20
 	String mode = if binary_outcome then "palogist" else "palinear"
 
         command {
@@ -132,8 +132,8 @@ workflow run_probabel {
 	String? missing
 	Boolean? robust
 	Array[String] out_names
-	String? memory
-	String? disk
+	Int? memory
+	Int? disk
 
 	call process_phenos {
 		input:
@@ -178,6 +178,10 @@ workflow run_probabel {
 	call cat_results {
 		input:
 			results_array = standardize_output.res_fmt
+	}
+
+        output {
+                File results = cat_results.all_results
 	}
 
 	parameter_meta {

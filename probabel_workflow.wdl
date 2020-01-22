@@ -57,6 +57,8 @@ task run_interaction {
 	String mode = if binary_outcome then "palogist" else "palinear"
 
         command {
+		echo "" > resource_usage.log
+		dstat -c -d -m --nocolor 10 1>>resource_usage.log &
                 /ProbABEL/src/${mode} \
                         -p ${phenofile} \
                         -d ${genofile} \
@@ -74,6 +76,7 @@ task run_interaction {
 
         output {
                 File res = "probabel_res_add.out.txt"
+		File resource_usage = "resource_usage.log"
         }
 }
 
@@ -179,6 +182,7 @@ workflow run_probabel {
 
         output {
                 File results = cat_results.all_results
+		Array[File] resource_usage = run_interaction.resource_usage
 	}
 
 	parameter_meta {

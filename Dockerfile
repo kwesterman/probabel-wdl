@@ -2,7 +2,7 @@ FROM ubuntu:latest
 
 MAINTAINER Kenny Westerman <kewesterman@mgh.harvard.edu>
 
-RUN apt-get update && apt-get install -y git python3 python3-pip libeigen3-dev autoconf 
+RUN apt-get update && apt-get install -y git python3 python3-pip libeigen3-dev autoconf dstat
 RUN pip3 install pandas scipy
 
 RUN git clone https://github.com/GenABEL-Project/ProbABEL \

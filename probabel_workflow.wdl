@@ -3,13 +3,13 @@ task process_phenos {
 	File phenofile
 	String sample_id_header
 	String outcome
-	String covar_headers
 	String exposure
+	String covar_names
 	String? delimiter = ","
 	String? missing = "NA"
 
 	command {
-		python3 /format_probabel_phenos.py ${phenofile} ${sample_id_header} ${outcome} "${covar_headers}" ${exposure} "${delimiter}" ${missing}
+		python3 /format_probabel_phenos.py ${phenofile} ${sample_id_header} ${outcome} ${exposure} "${covar_names}" "${delimiter}" ${missing}
 	}
 
 	runtime {
@@ -51,7 +51,7 @@ task run_interaction {
         File infofile
         File phenofile
 	Boolean binary_outcome
-	Boolean? robust
+	Boolean? robust = true
 	Int? memory = 10
 	Int? disk = 20
 	String mode = if binary_outcome then "palogist" else "palinear"
@@ -114,6 +114,7 @@ task cat_results {
 		docker: "quay.io/large-scale-gxe-methods/probabel-workflow"
 		disks: "local-disk 5 HDD"
 	}
+
 	output {
 		File all_results = "all_results.txt"
 	}
@@ -128,8 +129,8 @@ workflow run_probabel {
 	String sample_id_header
 	String outcome
 	Boolean binary_outcome
-	String covar_headers
-	String exposures
+	String exposure_names
+	String? covar_names = ""
 	String? delimiter
 	String? missing
 	Boolean? robust
@@ -141,8 +142,8 @@ workflow run_probabel {
 			phenofile = phenofile,
 			sample_id_header = sample_id_header,
 			outcome = outcome,
-			covar_headers = covar_headers,
-			exposure = exposures,
+			exposure = exposure_names,
+			covar_names = covar_names,
 			delimiter = delimiter,
 			missing = missing
 	}
@@ -171,7 +172,7 @@ workflow run_probabel {
 		call standardize_output {
 			input:
 				resfile = resfile,
-				exposure = exposures
+				exposure = exposure_names
 		}
 	}	
 
@@ -192,8 +193,8 @@ workflow run_probabel {
 		sample_id_header: "Column header name of sample ID in phenotype file."
 		outcome: "Column header name of phenotype data in phenotype file."
 		binary_outcome: "Boolean: is the outcome binary? Otherwise, quantitative is assumed."
-		covar_headers: "Column header names of the selected covariates in the pheno data file."
-		exposures: "Column header name of the covariates to use as the exposure for genotype interaction testing (ProbABEL can only handle one). The exposure must also be provided as a covariate."
+		exposure_names: "Column header name(s) of the exposures for genotype interaction testing (space-delimited). Only one exposures is currently allowed."
+		covar_names: "Column header name(s) of any covariates for which only main effects should be included (space-delimited). This set should not overlap with exposure_names."
 		delimiter: "Delimiter used in the phenotype file."
 		missing: "Missing value key of phenotype file."
 		robust: "Boolean: should robust (a.k.a. sandwich/Huber-White) standard errors be used?"

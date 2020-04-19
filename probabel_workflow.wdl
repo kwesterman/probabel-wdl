@@ -30,8 +30,7 @@ task sanitize_info {
 	command <<<
 		cat ${infofile} \
 			| cut -f 1-7 \
-			| awk '{ gsub("-","1",$6); print }' \
-			| awk '{ gsub("-","1",$7); print }' \
+			| awk '{ gsub("-","1",$0); print }' \
 			> "${infofile_base}.clean"
 	>>>
 
@@ -66,7 +65,7 @@ task run_interaction {
                         -d ${genofile} \
                         -i ${infofile} \
 			--interaction 1 \
-			${default="" true="--robust" false="" robust} \
+			${true="--robust" false="" robust} \
                         -o probabel_res
         }
 

@@ -1,6 +1,7 @@
 task process_phenos {
 	
 	File phenofile
+	File? idfile
 	String sample_id_header
 	String outcome
 	String exposure
@@ -9,7 +10,7 @@ task process_phenos {
 	String? missing = "NA"
 
 	command {
-		python3 /format_probabel_phenos.py ${phenofile} ${sample_id_header} ${outcome} ${exposure} "${covar_names}" "${delimiter}" ${missing}
+		python3 /format_probabel_phenos.py ${phenofile} ${sample_id_header} ${outcome} ${exposure} "${covar_names}" "${delimiter}" ${missing} "${idfile}"
 	}
 
 	runtime {
@@ -127,6 +128,7 @@ workflow run_probabel {
 	Array[File] genofiles
 	Array[File] infofiles
 	File phenofile
+	File? idfile
 	String sample_id_header
 	String outcome
 	Boolean binary_outcome
@@ -141,6 +143,7 @@ workflow run_probabel {
 	call process_phenos {
 		input:
 			phenofile = phenofile,
+			idfile = idfile,
 			sample_id_header = sample_id_header,
 			outcome = outcome,
 			exposure = exposure_names,
@@ -191,6 +194,7 @@ workflow run_probabel {
 		genofiles: "Array of genotype filepaths in Minimac dosage format."
 		infofiles: "Variant information files. NOTE: preprocessing step within this workflow will trim the info file to the first 7 columns and sanitize columns 6 & 7 (typically Quality and Rsq) by replacing dashes with a value of 1. Ideally, this input file contains only numeric values in columns 6 & 7."
 		phenofile: "Phenotype filepath."	
+		idfile: "Optional list of IDs associated with the .dose file (one per line) for use in filtering and aligning the phenotype file."
 		sample_id_header: "Column header name of sample ID in phenotype file."
 		outcome: "Column header name of phenotype data in phenotype file."
 		binary_outcome: "Boolean: is the outcome binary? Otherwise, quantitative is assumed."

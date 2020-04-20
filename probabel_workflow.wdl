@@ -57,9 +57,8 @@ task run_interaction {
 	String mode = if binary_outcome then "palogist" else "palinear"
 
         command {
-		#dstat -c -d -m --nocolor 10 1>>resource_usage.log &
-		echo "" > resource_usage.log
-		atop -x -P PRC,PRM,PRD | grep '(GEM)' 1>>resource_usage.log &
+		dstat -c -d -m --nocolor 1 > system_resource_usage.log &
+		atop -x -P PRM 1 | grep '(GEM)' > process_resource_usage.log &
 
                 /ProbABEL/src/${mode} \
                         -p ${phenofile} \

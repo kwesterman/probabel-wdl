@@ -2,6 +2,7 @@ FROM ubuntu:latest
 
 MAINTAINER Kenny Westerman <kewesterman@mgh.harvard.edu>
 
+ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y git python3 python3-pip libeigen3-dev autoconf 
 RUN pip3 install pandas scipy
 

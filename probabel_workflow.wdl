@@ -61,7 +61,7 @@ task run_interaction {
 
         command {
 		dstat -c -d -m --nocolor ${monitoring_freq} > system_resource_usage.log &
-		atop -x -P PRM ${monitoring_freq} | grep '(GEM)' > process_resource_usage.log &
+		atop -x -P PRM ${monitoring_freq} | grep '(${mode})' > process_resource_usage.log &
 
                 /ProbABEL/src/${mode} \
                         -p ${phenofile} \

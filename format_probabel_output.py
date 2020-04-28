@@ -18,5 +18,5 @@ res = (pd.read_csv(resfile, sep=" ")
        .assign(P_Value_Main = lambda x: 1 - chi2.cdf(x.Beta_Main ** 2 / x.Var_Beta_Main, df=1),
 	       P_Value_Interaction = lambda x: 1 - chi2.cdf(x.Beta_Interaction_1 ** 2 / x.Var_Beta_Interaction_1_1, df=1),
 	       P_Value_Joint = lambda x: 1 - chi2.cdf(x.Beta_Main ** 2 / x.Var_Beta_Main + x.Beta_Interaction_1 ** 2 / x.Var_Beta_Interaction_1_1, df=2))
-       .drop(["SE_Beta_Main", "SE_Beta_Interaction_1_1"], axis="columns"))
+       .drop(["Beta_Main", "Var_Beta_Main", "SE_Beta_Main", "P_Value_Main", "SE_Beta_Interaction_1_1"], axis="columns"))
 res.to_csv(outfile, sep=" ", index=False, na_rep="NaN")

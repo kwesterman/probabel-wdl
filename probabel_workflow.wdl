@@ -75,7 +75,8 @@ task run_interaction {
 	runtime {
 		docker: "quay.io/large-scale-gxe-methods/probabel-workflow"
 		memory: "${memory} GB"
-		disks: "local-disk ${disk} HDD"
+	 	disks: "local-disk ${disk} HDD"
+		gpu: false
 	}
 
         output {

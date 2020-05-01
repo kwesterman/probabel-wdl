@@ -77,6 +77,7 @@ task run_interaction {
 		memory: "${memory} GB"
 	 	disks: "local-disk ${disk} HDD"
 		gpu: false
+		dx_timeout: "7D0H00M"
 	}
 
         output {
@@ -145,7 +146,7 @@ workflow run_probabel {
 	Int? disk = 20
 	Int? monitoring_freq = 1
 
-	Int ppmem = ceil(size(phenofile, "GB")) + 1
+	Int ppmem = 2 * ceil(size(phenofile, "GB")) + 1
 
 	call process_phenos {
 		input:
